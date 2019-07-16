@@ -1,9 +1,5 @@
 ## Golang学习中一些小知识点的整理
 
-
-
-
-
 ### 数组
 
 1. `[3]int{}` 和`[4]int{}`是两种不同的数据类型，一个是长度为3的数组，一个是长度未4的数组。数组是不可变结构，所以数组之间可以使用`==`比较两个数组是否相同。
@@ -22,7 +18,7 @@
 
 3. Golang中的Map仅对键做浅拷贝，所以要求Map的键在Map的整个生命周期保持不变。所以slice不能作为Map的键
 
-4. `bytes.Equal([]byte, []byte)`可用来比较两个byteslice是否相等
+4. `bytes.Equal([]byte, []byte)`可用来比较两个byte slice是否相等
 
 5. 唯一允许使用`==`与slice比较的是: `nil`，slice的零值为`nil`，值为`nil`的slice没有对应底层数组：
 
@@ -36,7 +32,7 @@
 
 6. `make([]int, len, cap)`初始化一个slice，并传入len、cap：其实make创建了一个无名数组，只能使用创建的slice访问，返回的slice引用了整个数组
 
-7. `slice = append(slice, ele...)`用来将元素追加到slice后面：`append`会检查slice是否有足够的容量追加元素，容量不够时会重新分配一个底层数组（复杂的增长策略，保证线性复杂度），不保证append后底层数组是否改变
+7. `slice = append(slice, ele...)`用来将元素追加到slice后面：`append`会检查slice是否有足够的容量追加元素，容量不够时会重新分配一个底层数组（增长策略较复杂，保证线性复杂度），不保证append后底层数组是否改变
 
 8. `copy(dst, src slice)`，将src复制到dst，返回成功复制元素的数量（dst,src中的最小值）。不会存在`copy`引起索引越界
 
@@ -44,8 +40,12 @@
 
 1. 初始化:`make(map[type]type) || map[type]type`
 2. `delete(map, key)`移除map中一个元素，即使key不存在也是安全的操做
-3. map不能获取地址，`&map[sss]`编译错误
+3. map元素是一个值，不是一个变量，所以map元素不能获取地址，`&map[sss]`编译错误
 4. `for key, value := range imap {}`迭代顺序不固定。可将map中的键提出来放到数组中，遍历数组取值就可以顺序执行了。可以使用`sort.Strings(slice)`来对string slice排序
 5. `map`类型的零值是nil
-6. `value, _ = map[key]`检查是否存在对应key的value
+6. `value, ok = map[key]`ok用来检查是否存在对应key的value
 
+### Struct
+
+1. 如果一个结构体的成员变量名称是大写的，那么这个变量是可导出的
+2. 如果所有结构体成员都是可比较的，那么这个结构体是可比较的

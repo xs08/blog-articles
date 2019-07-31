@@ -4,7 +4,10 @@
 
 ### 下载安装编译器
 
-谷歌官网的guides里面也有介绍怎样安装Protoc编译器，这里是[介绍页面](https://developers.google.com/protocol-buffers/docs/downloads)。多数人推荐编译安装，可以获得最新的版本及优化的性能。我觉着对于刚入门学习的话，直接下载二进制打包好的来直接使用可以省事很多。安装包可在[github release](https://github.com/protocolbuffers/protobuf/releases)里面下载。下载解压后bin目录下的protoc就是编译器，*Unix系统可将其放到path对应的目录中，就可直接在Terminal中使用了。window同学可以直接用.exe文件。
+安装编译器的方式有如下：
+
+* 谷歌官网的guides里面也有介绍怎样安装Protoc编译器，这里是[介绍页面](https://developers.google.com/protocol-buffers/docs/downloads)。多数人推荐编译安装，可以获得最新的版本及优化的性能。我觉着对于刚入门学习的话，直接下载二进制打包好的来直接使用可以省事很多。安装包可在[github release](https://github.com/protocolbuffers/protobuf/releases)里面下载。下载解压后bin目录下的protoc就是编译器，*Unix系统可将其放到path对应的目录中，就可直接在Terminal中使用了。window同学可以直接用.exe文件
+* Mac下可直接使用Homebrew安装：`brew install protobuf`
 
 ### 插件安装
 

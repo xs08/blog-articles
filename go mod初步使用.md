@@ -57,6 +57,23 @@ go mod init hello
 
 
 
+### 添加依赖（更换依赖版本）
+
+以uuid为例：
+
+```bash
+ # 基础用户
+ go mod edit -require=github.com/satori/go.uuid
+ 
+ # 添加版本号
+ go mod edit -require=github.com/satori/go.uuid@master
+ 
+ # 更换依赖的版本，通添加版本号一样，只需更改为想要的版本就行,改为1.1.12
+  go mod edit -require=github.com/satori/go.uuid@1.1.12
+```
+
+
+
 
 ### 替换本地包
 有时候由于网络原因没法下载指定依赖包, 此时可以将需要包下载到本地,  然后替换需要的包引用就可以了. 

@@ -18,6 +18,8 @@
 
   * -X 指定请求方法，默认: -X GET： curl -X GET www.test.com
 
+  * -H/--header 指定请求头：curl -H "Content-Type=Application/json"
+
   * —data 指定发送数据: curl -X POST —data "data=xxx" www.test.com/api
 
   * —data-urlencode 发送数据编码：curl -X POST —data-urlencode "data=xxx" www.test.com
@@ -29,16 +31,16 @@
   * —cookie 发送cookie：curl —cookie "cokie1=xxx" www.test.com
 
     * `-c cookie-file`可以保存服务器返回的cookie到文件，`-b cookie-file`可以使用这个文件作为cookie信息，进行后续的请求。
-
+  
       ~~~bash
       curl -c cookies http://www.test.com
-      curl -b cookies http://www.test.com
+    curl -b cookies http://www.test.com
       ~~~
 
       
 
   * —header 增加头信息：curl —header "Content-Type:applition/json" http://www.test.com
-
+  
   * —form upload=@localfilename —form press = OK 上传文件: curl —form upload=@localfilename —form press=OK www.test.com/form
 
 

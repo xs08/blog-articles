@@ -61,7 +61,7 @@ RedisConn := &redis.Pool{
   Dial: func() (redis.Conn, error) {
     c, err := redis.Dial("tcp", "host")
     if err != nil {
-      return nil, error
+      return nil, err
     }
     if needAuth {
       if _, err = c.Do("AUTH", "auth string"); err != nil {

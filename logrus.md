@@ -1,6 +1,6 @@
 ## logrus 入门
 
-Github: [github.com/sirupsen/logrus](github.com/sirupsen/logrus)
+Github: [github.com/sirupsen/logrus](https://github.com/sirupsen/logrus)
 
 ### logrus特性：
 
@@ -16,3 +16,23 @@ Github: [github.com/sirupsen/logrus](github.com/sirupsen/logrus)
 
    
 
+#### 切换日志输入格式
+
+```golang
+// 默认文字模式
+log.SetFormatter(&log.TextFormatter{})
+
+// JSON 格式
+log.SetFormatter(&log.JSONFormatter{
+	DisableColors: true, // 控制台输出的时候不显示颜色
+	FullTimestamp: true, // 显示完整的时间格式
+})
+```
+
+#### 设置打印调用函数
+
+```golang
+log.SetReportCaller(true) // 打印调用函数,默认不打印.(method字段为调用方法)
+```
+
+> **除非特殊需要, 一般不要设置打印调用函数**.打印调用函数会有20%~40%的性能损耗!!!

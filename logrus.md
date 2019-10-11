@@ -19,6 +19,9 @@ Github: [github.com/sirupsen/logrus](https://github.com/sirupsen/logrus)
 #### 切换日志输入格式
 
 ```golang
+import (
+	log "github.com/sirupsen/logrus"
+)
 // 默认文字模式
 log.SetFormatter(&log.TextFormatter{})
 
@@ -32,7 +35,53 @@ log.SetFormatter(&log.JSONFormatter{
 #### 设置打印调用函数
 
 ```golang
+// 同上导入
 log.SetReportCaller(true) // 打印调用函数,默认不打印.(method字段为调用方法)
 ```
 
 > **除非特殊需要, 一般不要设置打印调用函数**.打印调用函数会有20%~40%的性能损耗!!!
+
+#### 设置输入终端
+
+```golang
+import (
+	"os"
+	log "github.com/sirupsen/logrus"
+)
+log.SetOutput(os.Stdout)
+```
+
+#### 设置打印级别
+
+```golang
+// 同上导入
+log.SetLevel(log.WarnLevel)
+```
+
+> 导入级别有：`TraceLevel`,  `DebugLevel`, `InfoLevel`, `WarnLeven`, `ErrorLevel`, `FatalLevel`, `Panic`
+
+#### 基本使用
+
+logrus推荐使用参数加信息的方法来打印日志，`log.Fields{}`就是用来嵌套参数的。基本操作如下：
+
+```golang
+// 记录用户登录信息。通过log.Fields嵌套参数
+log.WithFields(log.Fields{
+	"name": "tonyxiong",
+	"ip": "127.0.0.1",
+}).Info("User logined")
+```
+
+> 除了`Info`方法外，还有如下方法：`Trace`, `Debug`, `Info`, `Warn`, `Error`, `Fatal`, `Panic`等
+
+```golang
+// 打印统一参数的日志，可以将**WithFields**参数额外处理
+contextLogger := log.WithFields(log.Fields{
+	"name": "tongxiong",
+	"ip": "127.0.0.1",
+})
+// 接下来使用 contextLooger 就有统一的参数啦
+contextLogger.Info("User logined") // 打印的日志会带上 name 和 ip 参数
+contextLogger.Info("User logout")  // 打印的日志会带上 name 和 ip 参数
+```
+

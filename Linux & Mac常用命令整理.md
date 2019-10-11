@@ -42,6 +42,8 @@
   * —header 增加头信息：curl —header "Content-Type:applition/json" http://www.test.com
   
   * —form upload=@localfilename —form press = OK 上传文件: curl —form upload=@localfilename —form press=OK www.test.com/form
+  
+  * --head 检查响应头信息
 
 
 

@@ -37,14 +37,14 @@
 1. **Header**：header部分通常包含了两部分：type、alg。**type**是token的类型，使用JWT的时候值就是`JWT`。 **alg**是使用的Hash算法。例如SHA256或RSA等，然后会将这部分经过base64Url编码形成第一部分，如：
 
   ```json
-  { "alg": "SHA256", "typ": "JWT" }
+{ "alg": "SHA256", "typ": "JWT" }
   ```
 
 2. **Payload**：payload部分是荷载信息。它包含一些声明Claim(实体的描述，通常是需要存储的用户信息、以及一些其他的元数据)。这里的声明分三类：
 
-  * **Reserved Claims**：简单来说就是一些预定义的声明，用于记录JWT的相关信息。但这些并不是必须的，可以按照需要来声明。例如下面这些字段：*iss(issuer)*、*exp(expiration time)*、*sub(subject)*、*aud(audience)*等（这里有个规则，就是尽可能紧凑的使用命名，也是就减少编码后的长度）
-  * **Plubic Claims**：官方的介绍有点迷糊，个人觉得这里主要就是存放通用的数据的字段。比如用户数据中的用户名、电话、地址等信息
-  * **Private Claims**：交换信息双方额外定义的声明。除了Public Claims中定义的通用字段外，额外需要存储的字段。比如用户下单之后需要记录一个上次下单的时间这样的字段
+   * **Reserved Claims**：简单来说就是一些预定义的声明，用于记录JWT的相关信息。但这些并不是必须的，可以按照需要来声明。例如下面这些字段：*iss(issuer)*、*exp(expiration time)*、*sub(subject)*、*aud(audience)*等（这里有个规则，就是尽可能紧凑的使用命名，也是就减少编码后的长度）
+   * **Plubic Claims**：官方的介绍有点迷糊，个人觉得这里主要就是存放通用的数据的字段。比如用户数据中的用户名、电话、地址等信息
+   * **Private Claims**：交换信息双方额外定义的声明。除了Public Claims中定义的通用字段外，额外需要存储的字段。比如用户下单之后需要记录一个上次下单的时间这样的字段
 
   这里的数据也是经过Base64Url编码后形成第二部分，如：
 
@@ -60,7 +60,7 @@
 
 Golang中使用JWT也有了很多现成的实现，不需要我们再单独实现了。我这边主要记录一下`https://github.com/dgrijalva/jwt-go`这个包在Gin项目中的应用吧。只要了解了基本的原理，使用方式在其他类似的包及框架中基本上都是大同小异的
 
-###github.com/dgrijalva/jwt-go 主要方法介绍
+### github.com/dgrijalva/jwt-go 主要方法介绍
 
 这里我们用代码来介绍一下：
 
@@ -68,6 +68,8 @@ Golang中使用JWT也有了很多现成的实现，不需要我们再单独实�
 import (
 	"crypto/md5"
 	"encoding/hex"
+	
+	"github.com/dgrijalva/jwt-go"
 )
 // 自定义一种加密的算法
 func EncodeMD5(value string) string {
@@ -77,32 +79,84 @@ func EncodeMD5(value string) string {
 	return hex.EncodeToString(m.Sum(nil))
 }
 
-// 定义需要生成JWT的数据
+// 定义需要生成JWT的数据结构
 type UserClaims struct {
 	UserName string `json:"username"`
-	Password string `json:"password"`
+	PassWord string `json:"password"`
 	jwt.StandardClaims
 }
 
+// 定义一个secret加密使用
+jwtSecret := 'THISISSECRETSTRING'
+
 // 生成Token
 claims := Claims{
-		EncodeMD5(username),
-		EncodeMD5(password),
-		jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "gin-blog",
-		},
+	EncodeMD5(username),
+	EncodeMD5(password),
+	jwt.StandardClaims{
+		ExpiresAt: expireTime.Unix(),
+		Issuer:    "gin-blog",
+	},
 }
 tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 token, err := tokenClaims.SignedString(jwtSecret)
 
+
 // 解析JWT
-tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) 　(interface{}, error) {
+	return jwtSecret, nil
 })
+claims := tokenClaims.(Claims)
 ```
 
 
+
+### JWT在Gin中的使用
+
+Gin项目中，我们可以使用自定义中间件的方式，使用jwt来实现一个登录拦截器．
+
+```golang
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/dgrijalva/jwt-go"
+)
+
+// 实现ＪＷＴ校验中间件
+func JWTMiddleware() gin.Handler {
+	return func(ctx *gin.Context) {
+		// 核心思想，检验客户端传过来的Token，判断用户是否有权限访问
+		token := ctx.Query("token")
+		tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) 　(interface{}, error) {
+			return jwtSecret, nil
+		})
+		var message string
+		if token == "" {
+			message = "invalid params"
+		} else {
+		
+		}
+		if err != nil {
+			switch err.(*jwt.ValidationError).Errors {
+			case jwt.ValidationErrorExpired:
+				message = "login timeout"
+			default:
+				message = "auth checkout fail"
+			}
+		}
+		if message != "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": 0,
+				"message": message,
+				"data": interface{}
+			})
+			c.Abort()
+			return
+		}
+		
+		c.Next()
+	}
+}
+```
 
 
 

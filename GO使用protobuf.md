@@ -1,6 +1,6 @@
 ##GO 使用protobuf 
 
-记录一下Protobuf怎样用。栗子🌰来源于[谷歌ProtocolBuffer官方网站](https://developers.google.com/protocol-buffers/docs/gotutorial)。protocol buffer的使用是通过定义应用的proto文件，然后用编译器将proto文件转为语言可以使用的文件（转换后的文件不可以编辑！！），然后应用中使用的是转换后的文件。（Linux&Mac下使用）
+记录一下Protobuf怎样用。栗子🌰来源于[谷歌ProtocolBuffer官方网站](https://developers.google.com/protocol-buffers/docs/gotutorial)。protocol buffer的使用是通过定义应用的proto文件，然后用编译器将proto文件转为语言可以使用的文件（转换后的文件不可以编辑！因为很容易出错。如果你比较厉害，那就可以随意了哈），然后应用中使用的是转换后的文件。（Linux&Mac下使用）
 
 ### 下载安装编译器
 

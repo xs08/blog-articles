@@ -71,25 +71,25 @@ import (
 	
 	"github.com/dgrijalva/jwt-go"
 )
+
 // 自定义一种加密的算法
 func EncodeMD5(value string) string {
 	m := md5.New()
 	m.Write([]byte(value))
-
 	return hex.EncodeToString(m.Sum(nil))
 }
 
-// 定义需要生成JWT的数据结构
+// 定义需要生成JWT的数据结构。JSON化
 type UserClaims struct {
-	UserName string `json:"username"`
-	PassWord string `json:"password"`
+	UserName string `json:"uname"`
+	PassWord string `json:"pword"`
 	jwt.StandardClaims
 }
 
 // 定义一个secret加密使用
 jwtSecret := 'THISISSECRETSTRING'
 
-// 生成Token
+// 生成Token。将重要数据加密一下，防止泄露
 claims := Claims{
 	EncodeMD5(username),
 	EncodeMD5(password),
@@ -102,7 +102,7 @@ tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 token, err := tokenClaims.SignedString(jwtSecret)
 
 
-// 解析JWT
+// 解析JWT。注意：用户名和密码是使用EncodeMD5加密后的
 tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) 　(interface{}, error) {
 	return jwtSecret, nil
 })
@@ -129,11 +129,11 @@ func JWTMiddleware() gin.Handler {
 		tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) 　(interface{}, error) {
 			return jwtSecret, nil
 		})
+		
+		// 校验Token是否有已经Token是否有效
 		var message string
 		if token == "" {
 			message = "invalid params"
-		} else {
-		
 		}
 		if err != nil {
 			switch err.(*jwt.ValidationError).Errors {
@@ -143,6 +143,8 @@ func JWTMiddleware() gin.Handler {
 				message = "auth checkout fail"
 			}
 		}
+	
+    // 校验未通过。终止请求
 		if message != "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": 0,
@@ -153,20 +155,16 @@ func JWTMiddleware() gin.Handler {
 			return
 		}
 		
+		// 此时，Token确认是已经有且未过期的。接下来可能需要做的：
+		// 1. 对Token中的用户信息在做校验(虽然有，不一定有效);
+		// 2. 将Token信息传入gin.Context往下处理: c.Set("user", token)
+		
 		c.Next()
 	}
 }
 ```
 
-
-
-
-
-
-
-
-
-
+以上，就是Gin中使用JWT的基本示例
 
 
 

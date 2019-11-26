@@ -4,9 +4,9 @@
 
 1. 第一步，新建开发项目目录，如**react-fonfig**，并切换到该目录下。然后使用`npm init`初始化项目。可以自行配置项目名、维护者信息等。
 
-2. 安装_webpack_，_webpack-cli_等，基本安装。`npm i -D webpack webpack-cli` 。(webpack4安装需要安装_webapck-cli_)。
+2. 安装*webpack*，*webpack-cli*等，基本安装。`npm i -D webpack webpack-cli` 。(webpack4安装需要安装_webapck-cli_)。
 
-   项目根目录新建**webpack.config.js**, 添加_entry_，_output_等基本配置。
+   项目根目录新建**webpack.config.js**, 添加*entry*，*output*等基本配置。
 
    ~~~javascript
    const webpack = require('webpack')
@@ -44,7 +44,7 @@
    }
    ~~~
 
-4. 安装_babel_转码*ES6*和*ES6*等，`npm i -D @babel/core babel-loader @babel/preset-env @babel/preset-react`。**@babel/preset-env**配置解析ES6等，**@babel/preset-react**解析react，jsx等
+4. 安装*babel*转码*ES6*和*ES6*等，`npm i -D @babel/core babel-loader @babel/preset-env @babel/preset-react`。**@babel/preset-env**配置解析ES6等，**@babel/preset-react**解析react，jsx等
 
    （1）配置**.babelrc**
 
@@ -71,7 +71,7 @@
    }
    ~~~
 
-5. 配置*React*开发热替换。安装_webpack-dev-server_，_react-hot-loader_等，`npm i -D webpad-dev-server react-hot-loader`。
+5. 配置*React*开发热替换。安装*webpack-dev-server*，*react-hot-loader*等，`npm i -D webpad-dev-server react-hot-loader`。
 
    （1）修改**webpack.config.js**:
 
@@ -119,7 +119,7 @@
 
    
 
-6. 安装_HtmlWebPackPlugin_，用来生成html。`npm i -D html-webpack-plugin`，安装完成后需要在_webpack.config.js_中添加以下配置：
+6. 安装*HtmlWebPackPlugin*，用来生成html。`npm i -D html-webpack-plugin`，安装完成后需要在*webpack.config.js*中添加以下配置：
 
    （1）项目根目录新建一个**index.html**，可以在这个文件中配置其他额外的js等，当然也可以直接在HtmlWebPackPlugin里边配置。
 
@@ -154,7 +154,7 @@
    >
    > 然后就可以解析对应的alias了
 
-8. 配置_scss_。 _style-loader_会将css整合到js中，基于打包后文件的考虑，我选择将css文件抽离出来，从而没有使用_style-loader_，使用了_mini-css-extract-plugin_。_css-loader_，_sass-loader_，_node-sass_是必须得，我的项目中还用到了_postcss_，并且使用了_postcss_的一些插件，接下来一步一步的完善。
+8. 配置*scss*。 *style-loader*会将css整合到js中，基于打包后文件的考虑，我选择将css文件抽离出来，从而没有使用*style-loader*，使用了*mini-css-extract-plugin*。*css-loader*，*sass-loader*，*node-sass*是必须得，我的项目中还用到了*postcss*，并且使用了*postcss*的一些插件，接下来一步一步的完善。
 
    （1）基础配置：`npm i -D style-loader css-loader sass-loader node-sass`:
 
@@ -173,7 +173,7 @@
    ]
    ```
 
-   （2）使用_mini-css-extract-plugin_分离css，同时，配置压缩css需要使用的模块。`npm i -D mini-css-extract-plugin uglifyjs-webpack-plugin optimize-css-assets-webpack-plugin `：
+   （2）使用*mini-css-extract-plugin*分离css，同时，配置压缩css需要使用的模块。`npm i -D mini-css-extract-plugin uglifyjs-webpack-plugin optimize-css-assets-webpack-plugin `：
 
    > 注意，CSS提取出来之后不支持本地开发热加载。所以本项配置建议只在生产打包时使用
 
@@ -281,7 +281,7 @@
 
    
 
-   （4）配置_sass-resources-loader_自动添加全局变量，适用于有主题的需求。`npm i -D sass-resources-loader`
+   （4）配置*sass-resources-loader*自动添加全局变量，适用于有主题的需求。`npm i -D sass-resources-loader`
 
    需要新建一个*theme.scss*文件：`touch theme.scss`。
 

@@ -44,7 +44,7 @@
    }
    ~~~
 
-4. 安装_babel_转码*ES6*和*ES6*等，`npm i -D @babel/core babrl-loader @babel/preset-env @babel/preset-react`。**@babel/preset-env**配置解析ES6等，**@babel/preset-react**解析react，jsx等
+4. 安装_babel_转码*ES6*和*ES6*等，`npm i -D @babel/core babel-loader @babel/preset-env @babel/preset-react`。**@babel/preset-env**配置解析ES6等，**@babel/preset-react**解析react，jsx等
 
    （1）配置**.babelrc**
 
@@ -98,7 +98,7 @@
    "plugins": ["react-hot-loader/babel"]
    ~~~
 
-   （3）最后需要在入口文件**app.js**开启模块热替换:
+   （3）最后需要在入口文件**app.js**开启模块热替换（不开启没有热替换）: 
 
    ```javascript
    // ...
@@ -137,7 +137,22 @@
 
 7. 引入*eslint*配置，添加代码约束。首先全局安装*eslint-cli*，`npm i -g eslint-cli`。然后本地安装*eslint*，`npm i -D eslint`。然后项目根目录执行：`esint --init`来根据提示创建eslint配置文件。
 
-   如图：
+   > 如果项目中使用了webpack配置的**alias**，eslint默认不会解析这个选项的。对应的处理方式是引入：`eslint-import-resolver-webpack`，然后在`eslintrc.js`中添加如下配置：
+   >
+   > ```js
+   > module.exports = {
+   > 	settings: {
+   >     'import/resolver': {
+   >       webpack: {
+   >         //此处config对应webpack.config.js的路径
+   >         config: path.resolve(__dirname, 'config/webpack.config.js')
+   >       }
+   >     }
+   >   }
+   > }
+   > ```
+   >
+   > 然后就可以解析对应的alias了
 
 8. 配置_scss_。 _style-loader_会将css整合到js中，基于打包后文件的考虑，我选择将css文件抽离出来，从而没有使用_style-loader_，使用了_mini-css-extract-plugin_。_css-loader_，_sass-loader_，_node-sass_是必须得，我的项目中还用到了_postcss_，并且使用了_postcss_的一些插件，接下来一步一步的完善。
 
@@ -159,6 +174,8 @@
    ```
 
    （2）使用_mini-css-extract-plugin_分离css，同时，配置压缩css需要使用的模块。`npm i -D mini-css-extract-plugin uglifyjs-webpack-plugin optimize-css-assets-webpack-plugin `：
+
+   > 注意，CSS提取出来之后不支持本地开发热加载。所以本项配置建议只在生产打包时使用
 
    ```javascript
    // 提取出css，不注入js
@@ -183,7 +200,7 @@
    // ...plugins
    plugins: [
        // ...省略其他的
-       new MiniCssExtractlugin({
+       new MiniCssExtractPlugin({
          filename: '[name].[hash].css', // filename: devMode ? '[name].css' : '[name].[hash].css',
          chunkFilename: '[id].[hash].css' // chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
        })
@@ -192,43 +209,58 @@
    // ...optimization
    optimization: {
        runtimeChunk: 'single',
-       // css压缩设置. 生产环境压缩设置
+       // JS压缩设置. 生产环境压缩设置
        minimizer: [
          new UglifyJsPlugin({
            cache: true, // 缓存
            parallel: true, // 并行加载
            sourceMap: true // 生成sourceMap
          }),
+          // CSS压缩设置. 生产环境压缩设置
          new OptimizeCSSAssetsPlugin()
        ]
    }
    ```
 
-   （3）配置_postcss_，`npm i -D postcss-loader postcss-flexbugs-fixes postcss-autoreset`：
+   （3）配置_postcss_，`npm i -D postcss-loader autoprefixer`：
 
    编辑**postcss.config.js**
 
    ~~~javascript
    module.export = {
        plugins: [
-           require('postcss-autoreset')({ // css-reset设置
-               all: 'initial'
-           }),
            require('autoprefixer')({ // 配置autoprefixer
                // 配置支持的浏览器
                browsers: [
                  '>1%',
-                 'last 4 versions',
-                 'Firefox ESR',
+                 'last 2 versions',
                  'not ie < 9', // React doesn't support IE8 anyway
                ]
            }),
-           require('postcss-flexbugs-fixes') // 修复flex不同bug
        ]
    }
    ~~~
 
-   修改**webpack.config.js**:
+   >  **更新**：新版本的**autoprefixer**需要将**browsers**放在`.browserslistrc`，且`browserslistrc`方法支持更友好，还能避免一些bug。新建一个`.browserslistrc`文件，写入一下内容即可：
+   >
+   > ```shell
+   > # browserslistrc
+   > >1%
+   > last 2 versions
+   > not ie < 9 # React doesn't support IE8 anyway
+   > ```
+   >
+   > 同时，**postcss.config.js**需要更改为：
+   >
+   > ```js
+   > module.exports = {
+   >   plugins: {
+   >     autoprefixer: {},
+   >   }
+   > }
+   > ```
+
+   添加`post-css`还需加入`postcss-loader`，修改**webpack.config.js**:
 
    ~~~javascript
    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -240,12 +272,14 @@
            use: [
               MiniCssExtractPlugin.loader,
               "css-loader",
-              "postcss-loader",
+              "postcss-loader", // postcss-loader
               "sass-loader"
            ]
        }
    ]
    ~~~
+
+   
 
    （4）配置_sass-resources-loader_自动添加全局变量，适用于有主题的需求。`npm i -D sass-resources-loader`
 

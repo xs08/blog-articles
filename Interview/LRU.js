@@ -1,4 +1,4 @@
-
+// LRUCache: Least Recent Used 
 class LRUCache {
   constructor(limit) {
     if (!limit || typeof limit !== 'number') {
@@ -7,68 +7,87 @@ class LRUCache {
 
     this._limit = limit
     this._size = 0
+    this._head = this._tail = undefined
     this._map = new Map()
-    this._head = this._tail = null
   }
 
   get(key) {
-    const node = this._map.get(key)
-    // 不存在node
-    if (!node) return
-    // 该节点为头结点
-    if (node === this._head) return node.value
-    
-    // 否则将该节点移动到头部
-
-    // 前驱节点变更
-    if (node.prev) {
-      if (node === this._tail) {
-        this.tail = node.prev
-      }
-      // 后续节点交给前驱节点的后续
-      node.prev.next = node.next
+    const node  = this._map.get(key)
+    // 空节点直接返回
+    if (!node) {
+      return
     }
-    // 后续节点变更
+
+    // 头结点直接返回
+    if (node === this._head) {
+      return node.value
+    }
+
+    // 是否有前置节点
+    if (node.prev) {
+      node.prev.next = node.next
+
+      if (node === this._tail) {
+        node.prev.next = undefined
+        this._tail = node.prev
+      }
+    }
+    // 是否有后置节点
     if (node.next) {
       node.next.prev = node.prev
     }
-    // head　节点变更
+
+    node.prev = undefined
+    
+    // 处理头结点
     if (this._head) {
+      node.next = this._head
       this._head.prev = node
     }
+    // 替换头结点
     this._head = node
+
     return node.value
   }
 
   set(key, value) {
     let node = this._map.get(key)
-    // 不存在该节点
     if (!node) {
-      // 容量检查. 移除尾部节点
+      // 容量超限
       if (this._size === this._limit) {
-        // 移除尾部节点
+        this._map.delete(this._tail.key)
+        
         this._tail = this._tail.prev
-        this._tail.next = null
-
-        this._map.delete(key)
+        this._tail.next = undefined
         this._size --
       }
 
       node = { key, value }
+      // 加入存储
       this._map.set(key, node)
 
-      if (this._head) {
-        this._head.prev = node
-        this._head = node
+      if (!this._head) {
+        this._head = this._tail = node
       } else {
-        this._head = node
+        // 加入链表
+        this._tail.next = node
+        node.prev = this._tail
         this._tail = node
       }
 
       this._size ++
     }
-
     node.value = value
+  }
+
+  _print() {
+    let node = this._head
+    let index = 1
+    while(node) {
+      console.log(`${index}`, node)
+      node = node.next
+      index ++
+    }
   }
 }
 

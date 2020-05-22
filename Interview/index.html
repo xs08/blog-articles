@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>样式</title>
+  <style>
+    html,body,.container {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    /* 浮动布局 */
+    /*
+    .left {
+      background-color: rgb(47, 217, 223);
+      float: left;
+      width: 200px;
+      height: 100%;
+    }
+    .main {
+      background-color: rgb(42, 81, 141);
+      margin: 0 200px;
+      height: 100%;
+      overflow: hidden;
+    }
+    .right {
+      background-color: rgb(137, 199, 108);
+      float: right;
+      width: 200px;
+      height: 100%;
+    }
+    */
+
+    /* 定位布局 中间部分可margin也可绝对定位 */
+    /*
+    .left,.right {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 200px;
+    }
+    .left { left: 0; background: blue; }
+    .right { right: 0; background: green; }
+    .main {
+      height: 100%;
+      margin: 0 200px;
+      background: red;
+    }
+    .main {
+      position: absolute;
+      left: 200px;
+      right: 200px;
+    }
+    */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">Left</div>
+    <div class="right">Right</div>
+    <div class="main">Main</div>
+  </div>
+</body>
+</html>

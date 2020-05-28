@@ -45,7 +45,7 @@ self.addEventListener('fetch', event => {
         const newUrl = url.substr(0, url.lastIndexOf('.')) + '.webp'
         event.respondWith(
           fetch(newUrl, {
-            mode: 'no-cors
+            mode: 'no-cors'
           })
         )
       }

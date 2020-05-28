@@ -22,9 +22,9 @@ class Scheduler {
 
   // 执行task
   _execute() {
-    if (this._allTasks &&
-      (this._runningTask < this._conLimit) &&
-      (this._allTasks.length > this._runningTask)
+    if (this._allTasks && // 是否有任务
+      (this._runningTask < this._conLimit) && // 是否达到并发条件
+      (this._allTasks.length > this._runningTask) // 是否已经全部运行了
     ) {
       for (let i = 0; i < this._allTasks.length; i++) {
         // 找到一个可以执行的任务

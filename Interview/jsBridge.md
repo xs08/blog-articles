@@ -23,13 +23,16 @@ Android和iOS都可以通过拦截`URL Scheme`的方式来决定是否执行对�
 * 对于Android的话，原生的Webview提供了`shouldOverrideUrlLoadding`方法来提供Native拦截H5发送的`URL Scheme`请求
 * 对应iOS平台的话，系统的WKWebview也是可以根据拦截的`URL Scheme`和对应参数执行相关的操做
 
-这种方法的有点是安全性能较高，而且使用方式灵活，可以实现H5与Native页面的无缝切换。有个需要注意的问题是: 如果使用`iframe.src`来发送`URL Scheme`需要对URL的长度做控制，使用比较复杂，速度也较慢
+这种方法的优点是安全性能较高，而且使用方式灵活，可以实现H5与Native页面的无缝切换。有个需要注意的问题是: 如果使用`iframe.src`来发送`URL Scheme`需要对URL的长度做控制，使用比较复杂，速度也较慢。为什么要使用`iframe.src`?因为多次调用`location.href`时会有漏掉参数的情况
 
 ##### 2. 重写原生JS方法
 * Andorid4.2以前注入对象的接口是*addJavascriptInterface*，后来由于安全原因已经逐渐不使用了。重写原生方法一般会通过修改浏览器的部分window对象的方法来完成操做。主要是拦截**alert、confirm、prompt、console.log**四个方法，分别被*Webview*的**onJsAlert、onJsConfirm、onConsoleMessage、onJsPrompt**监听。
 * iOS由于安全限制，**WKWebview**对**alert、confirm、prompt**等方法做了拦截，如果通过此方式进行Native与JS交互，需要实现三个**WKUIDelegate**的方法。
 
 使用这种方式时，也需要与Native客户端约定好使用的传参的格式，H5调用的时候传入约定好的参数，如果参数有误则不执行对应的逻辑。**注意: 如果开发的H5页面需要在其他环境使用的话，则不可使用这种方式。其他平台肯定没有与Native相同的重写机制**
+> 重写prompt方法坑点: JS调用原生JS的alert、prompt方法时，会阻塞JS线程的执行，理论上使用原生方法改写的方式JS也是需要等该改写方法执行完。这时候如果UI线程调度导致Webview被销毁，onJsPrompt方法不会被回调，就会导致prompt一直等待，而JS线程一直阻塞的情况。一旦出现这种情况预估只能通过杀死进程的办法来解决了。
+
+> 怎样避免这样的情况呢？最好的方式就是不要主动destory webview就好了
 
 ##### 3. 注入API的方式
 基于Webview提供的能力，我们可以想**window**对象上注入对象或者方法。JS通过这个对象或者方法进行调用，来使用Native提供的能力，使用这种方式时，JS需要等待Native执行完对应的逻辑后才能执行回调。
@@ -45,6 +48,10 @@ Nativa调用JS比较简单，只需H5将JS方法暴露在**window**对象上给N
 * **H5引入**: JSBridge可以通过H5实现引入。这种方式可以确认JSBridge确实存在，但是后期如果JSBridge改变的话，双方都需要做兼容，所以维护成本较高
 * **Native注入**: 这种方式有利于保持Native的API一直性，缺点是Native注入方法和时机受限，JS调用Bridge前需要先判断JSBridge是否注入成功
 
+### JSBridge注入时机
+
 
 ### 引用文档
 * [小白必看，JSBridge 初探](https://www.zoo.team/article/jsbridge)
+* [Android 混合开发之JsBridge](https://cloud.tencent.com/developer/article/1536431)
+* [JSBridge深度剖析](https://cloud.tencent.com/developer/article/1038398)

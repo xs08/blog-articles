@@ -25,12 +25,23 @@ H5上使用Canvas裁剪图片还是比较简单的，
 
 ### 2. Canvas图像数据转为图片数据API
 Canvas图像转为图片数据的方法主要有三个，如下:
-| 方法 | 效果 | 说明 |
-| --- | --- | --- |
-| ctx.toDataUrl() | 将Canvas转为base64 |  |
-| ctx.getImageData() | 保存Canvas内容 |  |
-| ctx.putImageData() | 渲染保存的Canvas内容 |  |
+| 方法 | 效果 |
+| --- | --- |
+| ctx.toDataUrl() | 将Canvas转为base64 |
+| ctx.getImageData() | 保存Canvas内容 |
+| ctx.putImageData() | 渲染保存的Canvas内容 |
+
+### Canvas转为图像
+使用方法：`canvas.toDataURL(type, encoderOptions)`, 两个参数如下：
+* `type`: 图片格式，默认为`image/png`
+* `encoderOptions`: 在指定图片格式为`image/jpeg`或`image/webp`的情况下，可以从`0`到`1`的区间内选择图片的质量。如果超出取值范围，将会使用默认值`0.92`。其他参数会被忽略。
+
+
+### 3. 文件处理
+* `FileReader.readAsDataUrl(file)`: 可以获取到文件转为DataUrl数据
+* `URL.createObjectUrl(file)`: 最好主动释放`URL.revokeObjectURL(objectURL);`
 
 ### 引用文档
 * [Canvas教程](https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial)
 * [canvas - 裁剪并保存图片](https://blog.csdn.net/qq_40243950/article/details/91472278)
+* [Blob,FileReader全面解析](https://blog.csdn.net/swimming_in_IT_/article/details/84304649)
